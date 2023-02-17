@@ -16,6 +16,7 @@ import ma.um6p.powermanager.models.App
 import java.io.BufferedReader
 import java.io.FileInputStream
 import java.io.InputStreamReader
+import java.lang.reflect.Array
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.abs
@@ -221,32 +222,16 @@ class MonitorActivity : AppCompatActivity() {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun logCpus(freqMetric: String = "cur") {
-        binding.monitorCpuFreqLeft.text = ""
-        binding.monitorCpuFreqRight.text = ""
+    private fun logCpus(freqMetric: String = "cur"): IntArray {
         val n = Runtime.getRuntime().availableProcessors()
         val usages = IntArray(n)
+        usages.toTypedArray()
         for (i in 0 until n) {
             val coreInfo = getCoreFreq(i)
             usages[i] = coreInfo[3]
-            if (coreInfo[0] >= 1000000) {
-                val frq = String.format("%.2f", coreInfo[0].toDouble() / 1000000)
-                if (i % 2 == 0) {
-                    binding.monitorCpuFreqLeft.append("CPU $i: $frq Ghz (${coreInfo[3]}%)\n")
-                } else {
-                    binding.monitorCpuFreqRight.append("CPU $i: $frq Ghz (${coreInfo[3]}%)\n")
-                }
-            } else {
-                val frq = (coreInfo[0] / 1000)
-                if (i % 2 == 0) {
-                    binding.monitorCpuFreqLeft.append("CPU $i: $frq Mhz (${coreInfo[3]}%)\n")
-                } else {
-                    binding.monitorCpuFreqRight.append("CPU $i: $frq Mhz (${coreInfo[3]}%)\n")
-                }
-            }
         }
-        // print overall usage
-        binding.monitorCpuUsge.text = "${usages.average().toInt()} %"
+        val statistics = usages.average().toInt()
+
     }
 
     private fun readIntegerFile(filePath: String): Int {
